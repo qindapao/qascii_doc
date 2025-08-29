@@ -1,0 +1,954 @@
+= xx我的第一篇 AsciiDoc 文档
+Author Name <email@example.com>
+:toc:
+:icons: font
+:source-highlighter: highlightjs
+:sectnums:
+:sectnumlevels: 6
+
+
+
+== 所有语法的速查表和范例
+
+link:https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/[快速语法查看链接]
+
+语法太多了，下面只是列举了一部分，有空的时候再补充完整吧。具体的可以参考上面的链接速查。
+
+=== 段落
+
+==== 普通段落
+
+[source,asciidoc]
+----
+Paragraphs don't require special markup in AsciiDoc.
+A paragraph is defined by one or more consecutive lines of text.
+Line breaks within a paragraph are not displayed.
+
+Leave at least one empty line to begin a new paragraph.
+----
+
+在 AsciiDoc 中，段落不需要特殊标记。 +
+段落由一行或多行连续的文本定义。 
+段落内的换行符不显示。
+
+上面连接出来的文本每个行的内容间会多一个空格，这对于英文环境是OK的，但是对于中文就没有那么友好了。中文要保持没有多余的空格，就只能把句子写得很长了。这可能带来版本管理不便的问题。
+
+至少留一个空行以开始新的段落。如果结尾是 `空格 +` 那么就表示保留换行。或者下面这种格式也是可以的。里面的所有的格式都原样保留，但是字会变小，并且有特殊的格式。
+
+....
+这里所有的格式都原样保留的哦。
+换行什么的也是。
+....
+
+
+==== 文字段落
+
+[source,asciidoc]
+----
+A normal paragraph.
+
+ A literal paragraph.
+ One or more consecutive lines indented by at least one space.
+
+ The text is shown in a fixed-width (typically monospace) font.
+ The lines are preformatted (i.e., as formatted in the source).
+ Spaces and newlines,
+ like the ones in this sentence,
+ are preserved.
+----
+
+普通段落。
+
+ 文字段落。
+ 一行或多行连续文本，缩进至少一个空格。
+ 
+ 文本以等宽字体（通常为等宽字体）显示。
+ 文本行已预先格式化（即与源文件中的格式一致）。
+ 空格和换行符（例如本句中的空格和换行符）将被保留。
+
+==== 硬换行
+
+
+
+[source,asciidoc]
+----
+Roses are red, +
+violets are blue.
+
+[%hardbreaks]
+A ruby is red.
+Java is black.
+----
+
+玫瑰是红色的， +
+紫罗兰是蓝色的。
+
+[%hardbreaks]
+红宝石是红色的。
+Java是黑色的。
+
+==== 引段(Lead paragraph)
+
+[source,asciidoc]
+----
+[.lead]
+This text will be styled as a lead paragraph (i.e., larger font).
+
+This paragraph will not be.
+----
+
+[.lead]
+此文本将被设置为导语段落（即使用较大的字体）。
+
+此段落则不会。
+
+=== 文字格式
+
+==== 受限粗体、斜体和等宽字体(Constrained bold, italic, and monospace)
+
+[source,asciidoc]
+----
+It has *strong* significance to me.
+
+I _cannot_ stress this enough.
+
+Type `OK` to accept.
+
+That *_really_* has to go.
+
+Can't pick one? Let's use them `*_all_*`.
+----
+
+It has *strong* significance to me.
+
+I _cannot_ stress this enough.
+
+Type `OK` to accept.
+
+That *_really_* has to go.
+
+Can't pick one? Let's use them `*_all_*`.
+
+
+==== 不受约束的粗体、斜体和等宽字体(Unconstrained bold, italic, and monospace)
+
+[source,asciidoc]
+----
+**C**reate, **R**ead, **U**pdate, and **D**elete (CRUD)
+
+That's fan__freakin__tastic!
+
+Don't pass generic ``Object``s to methods that accept ``String``s!
+
+It was Beatle**__mania__**!
+----
+
+**C**reate, **R**ead, **U**pdate, and **D**elete (CRUD)
+
+That's fan__freakin__tastic!
+
+Don't pass generic ``Object``s to methods that accept ``String``s!
+
+It was Beatle**__mania__**!
+
+==== 突出显示、下划线、删除线和自定义角色(Highlight, underline, strikethrough, and custom role)
+
+[source,asciidoc]
+----
+Mark my words, #automation is essential#.
+
+##Mark##up refers to text that contains formatting ##mark##s.
+
+Where did all the [.underline]#cores# go?
+
+We need [.line-through]#ten# twenty VMs.
+
+A [.myrole]#custom role# must be fulfilled by the theme.
+----
+
+Mark my words, #automation is essential#.
+
+##Mark##up refers to text that contains formatting ##mark##s.
+
+Where did all the [.underline]#cores# go?
+
+We need [.line-through]#ten# twenty VMs.
+
+A [.myrole]#custom role# must be fulfilled by the theme.
+
+我们的 `css` 类里面定制了 `green` 这个属性，我们用上看下效果。
+
+A [.green]#custom role# must be fulfilled by the theme.
+
+==== 上标和下标(Superscript and subscript)
+
+[source,asciidoc]
+----
+^super^script
+
+~sub~script
+----
+
+^super^script
+
+~sub~script
+
+==== 智能引号和撇号(Smart quotes and apostrophes)
+
+[source,asciidoc]
+----
+"`double curved quotes`"
+
+'`single curved quotes`'
+
+Olaf's desk was a mess.
+
+A ``std::vector```'s size is the number of items it contains.
+
+All of the werewolves`' desks were a mess.
+
+Olaf had been with the company since the `'00s.
+----
+
+"`double curved quotes`"
+
+'`single curved quotes`'
+
+Olaf's desk was a mess.
+
+A ``std::vector```'s size is the number of items it contains.
+
+All of the werewolves`' desks were a mess.
+
+Olaf had been with the company since the `'00s.
+
+==== 自动链接、URL 宏和 mailto 宏(Autolinks, URL macro, and mailto macro)
+
+[source,asciidoc]
+----
+https://asciidoctor.org - automatic!
+
+https://asciidoctor.org[Asciidoctor]
+
+devel@discuss.example.org
+
+mailto:devel@discuss.example.org[Discuss]
+
+mailto:join@discuss.example.org[Subscribe,Subscribe me,I want to join!]
+----
+
+
+https://asciidoctor.org - automatic!
+
+https://asciidoctor.org[Asciidoctor]
+
+devel@discuss.example.org
+
+mailto:devel@discuss.example.org[Discuss]
+
+mailto:join@discuss.example.org[Subscribe,Subscribe me,I want to join!]
+
+最后这个是多候选文本。
+
+    AsciiDoc 的渲染器在处理链接时，会从中选择一个最合适的文本作为显示内容。这个选择是根据输出格式或主题配置来的：
+    在 HTML 输出中，通常只使用第一个候选项（比如 Subscribe）
+    在 DocBook 或 PDF 输出中，某些渲染器可能会选择第二个或第三个候选项
+    如果你使用的是定制主题或扩展宏，也可以让它根据上下文选择不同的文本
+
+==== 带有属性的 URL 宏(URL macros with attributes)
+
+[source,asciidoc]
+----
+https://chat.asciidoc.org[Discuss AsciiDoc,role=external,window=_blank]
+
+https://chat.asciidoc.org[Discuss AsciiDoc^]
+----
+
+https://chat.asciidoc.org[Discuss AsciiDoc,role=external,window=_blank]
+
+https://chat.asciidoc.org[Discuss AsciiDoc^]
+
+可以实现一些特殊的效果，比如点击后在新标签中打开等等。
+
+当目标以 https: 之类的 URL 方案开头时，无需使用 link: 宏前缀。URL 方案充当隐式宏前缀。
+
+==== 包含空格和特殊字符的 URL(URLs with spaces and special characters)
+
+[source,asciidoc]
+----
+link:++https://example.org/?q=[a b]++[URL with special characters]
+
+https://example.org/?q=%5Ba%20b%5D[URL with special characters]
+----
+
+link:++https://example.org/?q=[a b]++[URL with special characters]
+
+https://example.org/?q=%5Ba%20b%5D[URL with special characters]
+
+==== 链接到相关文件(Link to relative file)
+
+[source,asciidoc]
+----
+link:index.html[Docs]
+----
+
+link:index.html[Docs]
+
+==== 使用 Windows UNC 路径进行链接(Link using a Windows UNC path)
+
+[source,asciidoc]
+----
+link:\\server\share\whitepaper.pdf[Whitepaper]
+----
+
+link:\\server\share\whitepaper.pdf[Whitepaper]
+
+\\服务器名\共享名\文件路径
+
+==== 内联锚(Inline anchors)
+
+
+[source,asciidoc]
+----
+[[bookmark-a]]Inline anchors make arbitrary content referenceable.
+
+[#bookmark-b]#Inline anchors can be applied to a phrase like this one.#
+
+anchor:bookmark-c[]Use a cross reference to link to this location.
+
+[[bookmark-d,last paragraph]]The xreflabel attribute will be used as link text in the cross-reference link.
+----
+
+[[bookmark-a]]Inline anchors make arbitrary content referenceable.
+
+[#bookmark-b]#Inline anchors can be applied to a phrase like this one.#
+
+anchor:bookmark-c[]Use a cross reference to link to this location.
+
+[[bookmark-d,last paragraph]]The xreflabel attribute will be used as link text in the cross-reference link.
+
+
+
+<<bookmark-d>> <<bookmark-a>> <<bookmark-b>> <<bookmark-c>>
+
+✅ `+++anchor:bookmark-c[]+++` 是一种 宏调用，语法上更灵活
+
+    它不会影响后面的文本格式，也不会显示任何视觉标记
+    可以放在任何位置，比如代码块、列表项、段落前
+    渲染后只是定义了一个跳转点，不改变内容样式
+
+✅ `+++[[bookmark-a]]+++` 是最常见的 块级锚点
+
+    它会把锚点绑定到紧接着的块元素（如段落、标题）
+    不会显示任何视觉标记
+    推荐用于章节跳转、段落定位
+
+✅ `+++[#bookmark-b]#文本#+++` 是一种 内联锚点
+
+    它不仅定义了锚点，还会把该文本渲染为强调样式（通常是斜体或加粗）
+    适合给某个词或短语加锚点，精度更高
+    渲染后用户能看到这个词是“可跳转”的
+
+* 如果你要跳转到整段或整节内容，用 `+++[[id]]+++`
+* 如果你要跳转到某个词或短语，用 `+++[#id]#text#+++`
+* 如果你要在不影响格式的情况下定义锚点，用 `+++anchor:id[]+++`
+
+==== 交叉引用(Cross references)
+
+[source,asciidoc]
+----
+See <<paragraphs>> to learn how to write paragraphs.
+
+Learn how to organize the document into <<section-titles,sections>>.
+----
+See <<paragraphs>> to learn how to write paragraphs.
+
+Learn how to organize the document into <<section-titles,sections>>.
+
+==== 文档间交叉引用(Inter-document cross references)
+
+
+[source,asciidoc]
+----
+Refer to xref:document-b.adoc#section-b[Section B of Document B] for more information.
+
+If you never return from xref:document-b.adoc[Document B], we'll send help.
+----
+
+Refer to xref:document-b.adoc#section-b[Section B of Document B] for more information.
+
+If you never return from xref:document-b.adoc[Document B], we'll send help.
+
+这是文档间的链接，非常的方便。转换成``html``的过程中是自动处理后缀的，但是转换成``pdf``可能需要专业的功能才能办到。
+
+
+=== 文档标题(Document header)
+
+==== 标题(Title)
+
+++++
+<pre>
+ = Document Title
+ 
+ This document provides...
+</pre>
+++++
+
+==== 标题和作者行(Title and author line)
+
+++++
+<pre>
+ = Document Title
+ Author Name <author@email.org>
+ 
+ This document provides...
+</pre>
+++++
+
+==== 标题、作者行和修订行
+
+
+++++
+<pre>
+ = Document Title
+ Author Name <author@email.org>; Another Author <a.author@email.org>
+ v2.0, 2019-03-22
+ 
+ This document provides...
+</pre>
+++++
+
+IMPORTANT: 如果没有作者行，就不能有修订行。
+
+==== 带有属性条目的文档标题(Document header with attribute entries)
+
+++++
+<pre>
+ = Document Title
+ Author Name <author@email.org>
+ v2.0, 2019-03-22
+ :toc:
+ :homepage: https://example.org
+ 
+ This document provides...
+ </pre>
+++++
+
+=== 章节标题(Section titles)
+
+==== 文章章节级别(Article section levels)
+
+当文档类型为article（默认）时，文档只能有一个0级章节标题（=），即文档标题（即doctitle）。
+
+[source,asciidoc]
+----
+ = Document Title (Level 0)
+ 
+ == Level 1 Section Title
+ 
+ === Level 2 Section Title
+ 
+ ==== Level 3 Section Title
+ 
+ ===== Level 4 Section Title
+ 
+ ====== Level 5 Section Title
+----
+
+==== 书籍部分级别(Book section levels)
+
+书籍文档类型可以包含额外的 0 级章节标题，这些标题会被解释为部分。只要至少有一个部分存在，文档就会隐式地成为一本包含多个部分的书籍。
+
+[source,asciidoc]
+----
+ = Document Title (Level 0)
+
+ == Level 1 Section Title
+ 
+ = Level 0 Section Title (Part)
+ 
+ == Level 1 Section Title
+ 
+ === Level 2 Section Title
+ 
+ ==== Level 3 Section Title
+ 
+ ===== Level 4 Section Title
+ 
+ ====== Level 5 Section Title
+ 
+ = Another Level 0 Section Title (Part)
+----
+
+
+== 其它杂七杂八的一些个人格式整理
+
+== 一、标题与段落
+
+这是一个普通段落。你可以在这里写任何内容。
+
+++++
+<strong>加粗</strong> 和 <em>斜体</em>
+++++
+
+*加粗* _斜体_
+
+== 二、列表与任务
+
+. 有序列表项一
+. 有序列表项二
+
+* 无序列表项一
+* 无序列表项二
+
+- [ ] 任务一（未完成）
+- [x] 任务二（已完成）
+
+== 三、链接与引用
+
+link:https://asciidoctor.org[AsciiDoctor 官网]
+
+<<section-图像,跳转到图像部分>>
+
+== 四、代码块
+
+[source,python]
+----
+def hello():
+    print("Hello, AsciiDoc!")
+----
+
+<<iamahunk,跳转到我的自定义锚点>>
+
+*加粗* _斜体_ +重点高亮+
+
+
+pass:[<pre>                                      
++--------+     +--------+      <d>删除</d>    <d>这个不生效了吗</d>  | | 
+| 模块A  | --> | 模块B  |  <l h="https://example.com">点击这里</l>   | |
++--------+     +--------+
+xx<b>粗体</b>xx   <i>斜体</i>  <u>高亮</u>
+</pre>]
+
+++++
+<pre>
+
+*boald* _1223_            
++--------+     +--------+        <d>deletecon </d>    <d>删除</d>                     |              |
+| modeA  | --> | modeB  |  <l h="https://example.com">中文kxx</l>                     |              |               
++--------+     +--------+  <l h="#xggegemoduleB">中文</l>                             |              |
+xx<x>粗体dedg</x>xx   <z>斜体</z>     <h>高亮</h>后面的内容不高亮                     |              |
+              xx                                                                      |
+<l h="#xggegemoduleB">中文</l>           other                                        |
+</pre>
+++++
+
+
+
+*bold* _italic_
+
+*加粗* _斜体_
+
+*xx*   _italic_
+
+*gegge*  _italic_
+
+ *gegge*  _italic_
+
+
+`行内代码` ``行内代码``
+
+
+
+
+这种方法+++<del>这是一段被删除的文字</del>+++还是可以的
+
+或者这种方法pass:[<del>这是一段被删除的文字</del>]也是行的
+
+++++
+<strong>加粗</strong> 和 <em>斜体</em>
+++++
+
+== 五、图像嵌入
+
+[#section-图像]
+image::images/diagram.png[系统架构图,align="center",width=300]
+
+
+== 六、表格
+
+[cols="1,2", options="header"]
+|===
+| 模块 | 描述
+| A    | 用户认证模块
+| B    | 数据处理模块
+|===
+
+=== xx
+==== yy
+===== zz
+====== kk
+
+== 七、注释与元信息
+
+// 这是一个注释，不会被渲染
+
+[[xggegemoduleB]]
+
+== 八、图文混排效果
+
+++++
+<img src="pics/2025-08-26.png" class="float-left-img" />
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+根根嗯
+跟哥哥
+跟嗯待待待待待待待待待待待待待待带
+跟庚庚庚庚庚庚庚庚庚庚庚庚庚庚庚庚庚庚
+<div class="clearfix"></div>
+++++
+
+xxx
+
+
+++++
+<img src="pics/2025-08-26.png" class="float-left-img" style="width: 300px;"/>
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+庚庚庚
+<div class="clearfix"></div>
+++++
+
+++++
+<img src="pics/2025-08-26.png" class="float-right-img" style="width: 300px;"/>
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+庚庚庚
+<div class="clearfix"></div>
+++++
+
+
+++++
+<img src="pics/2025-08-26.png" class="centered-img"/>
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+这是一些文字，它会从图片顶部开始环绕，直到图片底部，然后继续排版。<b>加粗</b>、<i>斜体</i>、<a href="#">链接</a>
+庚庚庚
+<div class="clearfix"></div>
+++++
+
+
+++++
+<div class="flow-wrap">
+  <div class="left">
+    这是左侧的文字，它从页面左边开始排版，直到图片左边。你可以写很多内容，它会自动换行并保持对齐。
+    这是左侧的文字，它从页面左边开始排版，直到图片左边。你可以写很多内容，它会自动换行并保持对齐。
+  </div>
+  <img src="pics/2025-08-26.png" alt="居中图片" />
+  <div class="right">
+    这是右侧的文字，它从图片右边开始排版，继续延伸到页面右边。适合做图文穿插、视觉对称的展示。
+    这是右侧的文字，它从图片右边开始排版，继续延伸到页面右边。适合做图文穿插、视觉对称的展示。
+  </div>
+</div>
+++++
+
+++++
+<div class="flow-wrap">
+  <div class="left">
+    <ul>
+      <li>无线协议支持</li>
+      <li>低功耗设计</li>
+      <li>多通道传输</li>
+      <li>自动频率跳变</li>
+      <li>内置安全模块</li>
+    </ul>
+  </div>
+
+  <img src="pics/2025-08-26.png" alt="居中图片" />
+
+  <div class="right">
+    <ol>
+      <li>初始化芯片</li>
+      <li>配置网络参数</li>
+      <li>建立连接</li>
+      <li>数据传输</li>
+      <li>断开连接</li>
+    </ol>
+  </div>
+</div>
+++++
+
+++++
+<div class="flow-wrap">
+  <div class="left">
+    初始化芯片  
+    配置网络参数  
+    建立连接  
+    数据传输
+    断开连接
+  </div>
+  <img src="pics/2025-08-26.png" alt="居中图片" />
+  <div class="right">
+    初始化芯片
+    配置网络参数
+    建立连接
+    数据传输
+    断开连接
+  </div>
+</div>
+++++
+
+
+
+松松
+
+== 九、文字渲染
+
+=== 颜色渲染
+
+真的可以 [.red-text]#这是红色文字# 这样的啊              [.red-text]#这是红色文字#
+
+    语法的前后必须有空格，不然颜色不会正常显示。
+        个的e
+
+
+这是pass:[<span class="red-text">红色文字</span>]的一部分。
+
+这样也可以+++<span class="red-text">红色文字</span>+++可以不保留空格
+    
+    如果想不要空格也能显示，只能像上面这样。用`pass`语法。
+
+
+== 十、引用
+
+____
+这是一个引用段落。
+可以包含多行内容。
+____
+
+[quote, 孔子, 《论语》]
+____
+知之者不如好之者，好之者不如乐之者。
+____
+
+[quote, 爱因斯坦]
+____
+*想象力* 比知识更重要。知识是有限的，而想象力概括着世界，推动着进步。
+____
+
+=== 测试h3
+
+==== 测试h4
+===== 测试h5
+====== 测试h6xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+====== 测试h6xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+== 十一、svg原生显示
+
+我们的目的是 `svg` 不要显示成图片，而是svg本身，这样就可以在页面中搜索。
+
+如果使用的是 `draw.io` 那么最终需要 *导出* 到目标位置，而不能是另存为。
+
+++++
+<object type="image/svg+xml" data="svgs/未命名绘图.svg" width="800" height="600"></object>
+++++
+
+== 十二、分章节功能
+
+查看 todo.txt 
+
+== 十三、视频链接
+
+可以把图片作为视频的链接。
+
+link:https://www.youtube.com/watch?v=abc123xyz[image:pics/2025-08-26.png[点击观看视频]]
+
+
+.图像展示
+
+/* 下面这个不是快标题 */
+. 图像展示
+
+== 基础语法整理
+
+#高亮#
+
+[small]#小字#
+
++下划线+
+
+++++
+<pre>
+
+1. 文档头部
+
+= 文档标题
+作者名 <email@example.com>
+:toc:                     // 目录
+:sectnums:                // 自动编号
+:source-highlighter: highlightjs
+
+2. 文本格式
+
+语法	效果	示例
+*加粗*	加粗	*重要内容*
+_斜体_	斜体	_强调内容_
+`代码`	行内代码	`print()`
++下划线+	下划线	+重点+
+#高亮#	高亮（取决于样式）	#警告#
+[small]#小字#	小字体	[small]#注释内容#
+
+
+3. 标题与章节
+
+ = 一级标题（文档标题）
+ == 二级标题
+ === 三级标题
+ ==== 四级标题
+
+标题前面没有空格的，这里是防止tagbar解析错误才这样写。
+
+可配合 :sectnums: 自动编号。
+
+4. 列表
+
+无序列表
+
+* 项目一
+* 项目二
+** 子项
+
+asciidoc
+. 第一项
+. 第二项
+    . 子项
+
+复选框列表
+
+* [x] 已完成
+* [ ] 未完成
+
+5. 引用与注释
+
+引用块
+[quote, 作者, 来源]
+____
+这是引用内容。
+____
+
+注释（不会显示）
+// 这是注释
+
+6. 表格
+
+|===
+| 姓名 | 年龄 | 城市
+
+| 张三 | 28 | 北京
+| 李四 | 35 | 上海
+|===
+可加属性 [cols="1,2,3", options="header"] 控制列宽和表头。
+
+7. 链接与图像
+
+链接
+
+https://example.com[点击访问]
+
+图像
+
+image::logo.png[公司Logo, width=200, align=center]
+
+8. 代码块
+
+普通代码块
+
+[source, python]
+----
+def hello():
+    print("Hello AsciiDoc")
+----
+
+行内代码
+
+`print("Hello")`
+9. Admonition 提示块
+
+NOTE: 这是一个提示
+TIP: 小技巧
+WARNING: 警告信息
+IMPORTANT: 重要内容
+CAUTION: 小心！
+
+
+10. 区块与布局
+
+分隔线
+
+'''
+
+标题块
+
+[.title]
+
+这是一个标题块
+
+自定义 ID 与角色
+
+[[section-id]]
+[.custom-class]
+ == 标题 
+
+上面是顶格的，前面没有空格的。防止tagbar解析错误才这样写的。
+
+11. 高级语法
+
+条件包含
+
+ifdef::env-docbook[]
+这是 DocBook 环境下显示的内容
+endif::[]
+
+文件包含
+
+include::chapter1.adoc[leveloffset=+1]
+
+12. 元数据属性（可选）
+属性	说明
+:author:	作者名
+:email:	邮箱
+:revnumber:	版本号
+:revdate:	日期
+:description:	文档描述
+:keywords:	SEO关键词
+</pre>
+++++
+
+
+
+. 有序列表
+.. 子项
+.. 子项
+. 下面一个
+
+
+.块标题
+术语1:: 这是术语1的解释
+术语2:: 这是术语2的解释
+
+
+这是一个普通段落。你可以在这里写任何内容。
+
+++++
+<strong>加粗</strong> 和 <em>斜体</em>
+++++
+
+*加粗* _斜体_
+
