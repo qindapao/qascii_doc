@@ -323,11 +323,18 @@ line-height: 1.3;
         white-space: nowrap;
     }
 
-    /* 容器：按钮并排显示 */
+    /* 默认左侧模式：按钮靠左 */
     #sidebar .button-group {
         display: flex;
-        gap: 4px;     /* 所有按钮之间 4px 间距 */
-        margin-bottom: 8px;  /* 组与内容的底部间隔 */
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-bottom: 8px;
+        justify-content: flex-start;
+    }
+
+    /* 右侧模式：按钮靠右 */
+    #side-container.right #sidebar .button-group {
+        justify-content: flex-end;
     }
 
     /* 针对 ➕/➖ 做小号按钮 */
@@ -338,6 +345,45 @@ line-height: 1.3;
         width: auto;        /* 宽度只跟内容和 padding 有关 */
     }
 
+    /* 支持右侧模式：容器、侧栏、hover 展开、拖拽句柄 */
+    #side-container.right { left: auto; right: 0; }
+
+    #side-container.right #sidebar {
+        left: auto;
+        right: 0;
+        transform: translateX(100%);
+        border-left: 1px solid #ddd;
+        border-right: none;
+        box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+    }
+
+    #side-container.right:hover #sidebar { transform: translateX(0); }
+    #side-container.right #sidebar-handle { left: auto; right: 0; }
+
+    /* 右侧“固定模式”下主区覆盖左侧默认规则 */
+    body.right.fixed #output {
+        margin-left: auto;
+        margin-right: 400px; /* 会被 JS 的动态宽度覆盖，这里只是兜底 */
+    }
+
+    /* 1) 左侧固定仅在非右侧时生效，避免右侧固定时留出左侧空白 */
+    body.fixed:not(.right) #output {
+        margin-left: 400px;
+    }
+
+    /* 2) 右侧固定时：主区向左收缩，同时强制取消左侧的留白 */
+    body.right.fixed #output {
+        margin-right: 400px;
+        margin-left: 0 !important;
+    }
+
+    /* 3) 右侧固定时，禁止 hover 折叠覆盖固定状态（确保 transform 恒为 0） */
+    #side-container.right.fixed #sidebar {
+        transform: translateX(0) !important;
+    }
+    #side-container.right.fixed:hover #sidebar {
+        transform: translateX(0) !important;
+    }
 
     /* ====================== 侧边栏目录样式结束 ====================== */
         </style>
@@ -350,7 +396,7 @@ line-height: 1.3;
         <div id="side-container">
             <div id="sidebar">
                 <!-- ✅ 新增：固定/悬浮切换按钮放入侧边栏顶部 -->
-                <button id="toggleSidebarMode" class="sidebar-btn">固定侧栏</button>
+                <button id="toggleSidebarMode" class="sidebar-btn">PIN</button>
             </div>
             <div id="sidebar-handle"></div>
         </div>
@@ -424,7 +470,7 @@ line-height: 1.3;
                     // ✅ 创建“全部折叠”按钮并绑定事件
                     const collapseBtn = document.createElement("button");
                     collapseBtn.id = "toggleAll";
-                    collapseBtn.textContent = "全部折叠";
+                    collapseBtn.textContent = "FOLD";
                     collapseBtn.className = "sidebar-btn";
 
                     let allExpanded = true;
@@ -442,7 +488,7 @@ line-height: 1.3;
                             }
                         });
                         allExpanded = !allExpanded;
-                        collapseBtn.textContent = allExpanded ? '全部折叠' : '全部展开';
+                        collapseBtn.textContent = allExpanded ? 'FOLD' : 'UNFOLD';
                     });
 
                     // ✅ 插入箭头逻辑（不变）
@@ -476,6 +522,16 @@ line-height: 1.3;
                     decreaseBtn.textContent = "➖";
                     decreaseBtn.className = "sidebar-btn";
 
+                    const positionBtn = document.createElement("button");
+                    positionBtn.id = "toggleSidebarPosition";
+                    positionBtn.textContent = "RIGHT";
+                    positionBtn.className = "sidebar-btn";
+
+                    const widthGroup = document.createElement("div");
+                    // button-group：提供 flex 布局和间距
+                    // width-control：语义标识（目前未定义样式，但可用于未来扩展）
+                    widthGroup.className = "button-group width-control";
+
                     // ✅ 插入按钮和 TOC 到 sidebar
                     const btnGroup = document.createElement("div");
                     btnGroup.className = "button-group";
@@ -483,14 +539,55 @@ line-height: 1.3;
                     btnGroup.appendChild(decreaseBtn);
                     btnGroup.appendChild(toggleBtn);
                     btnGroup.appendChild(collapseBtn);
+                    btnGroup.appendChild(positionBtn);
 
                     sidebar.innerHTML = '';
                     sidebar.appendChild(btnGroup);
+
+                    widthGroup.appendChild(increaseBtn);
+                    widthGroup.appendChild(decreaseBtn);
+                    sidebar.appendChild(widthGroup);
+
                     sidebar.appendChild(clone);
 
                     // —— 按钮绑定放在这里 —— 
                     increaseBtn.addEventListener("click", () => adjustSidebarWidth(20));
                     decreaseBtn.addEventListener("click", () => adjustSidebarWidth(-20));
+                    positionBtn.addEventListener("click", () => {
+                        const sidebar = document.getElementById("sidebar");
+                        const handle  = document.getElementById("sidebar-handle");
+                        const isRight = sideContainer.classList.toggle("right");    // 切换容器位置
+                        document.body.classList.toggle("right", isRight);           // 标记全局位置
+                        const isFixed = document.body.classList.contains("fixed");
+
+                        // 明确设置侧栏锚点
+                        if (isRight) {
+                            sidebar.style.left  = "auto";
+                            sidebar.style.right = "0";
+                        } else {
+                            sidebar.style.right = "auto";
+                            sidebar.style.left  = "0";
+                        }
+
+                        // 句柄位置随模式与宽度同步
+                        const w = parseInt(sidebar.style.width, 10) || sidebar.offsetWidth;
+                        if (isFixed) {
+                            if (isRight) {
+                                handle.style.left  = "auto";
+                                handle.style.right = w + "px";
+                            } else {
+                                handle.style.right = "auto";
+                                handle.style.left  = w + "px";
+                            }
+                        } else {
+                            handle.style.left  = isRight ? "auto" : "0px";
+                            handle.style.right = isRight ? "0px"  : "auto";
+                        }
+
+                        // 更新按钮文案并统一走一次宽度同步（保证主区 margin 正确）
+                        positionBtn.textContent = isRight ? "LEFT" : "RIGHT";
+                        adjustSidebarWidth(0);
+                    });
                 }
             }
 
@@ -549,34 +646,45 @@ line-height: 1.3;
             toggleSidebarBtn.addEventListener("click", () => {
                 const isFixed = sideContainer.classList.toggle("fixed");
                 document.body.classList.toggle("fixed", isFixed);
-                toggleSidebarBtn.textContent = isFixed ? "取消固定侧栏" : "固定侧栏";
+                toggleSidebarBtn.textContent = isFixed ? "UNPIN" : "PIN";
                 // ← 在此处加入下面这一行，让主区 margin 也实时对齐
                 adjustSidebarWidth(0);
             });
 
             /**
-             * 根据 delta(+20 或 -20) 调整 sidebar 宽度，
-             * 并让主区在固定模式下跟随偏移，
-             * 悬浮模式下保证拖动条永远回到左侧 0。
-             */
+            * 根据 delta(+20 或 -20) 调整 sidebar 宽度，
+            * 并让主区在固定模式下跟随偏移，
+            * 悬浮模式下保证拖动条永远回到左侧 0。
+            */
             function adjustSidebarWidth(delta) {
                 const sidebar = document.getElementById("sidebar");
                 const output  = document.getElementById("output");
                 const handle  = document.getElementById("sidebar-handle");
 
-                // 读当前宽度（优先取 style，再 fallback offsetWidth）
                 let current = parseInt(sidebar.style.width, 10);
                 if (isNaN(current)) current = sidebar.offsetWidth;
-                const newW = Math.max(200, Math.min(current + delta, 800));
+                const newW = Math.max(150, Math.min(current + delta, 800));
                 sidebar.style.width = newW + "px";
 
-                if (document.body.classList.contains("fixed")) {
-                    output.style.marginLeft = newW + "px";
-                    handle.style.left      = newW + "px";
+                const isFixed = document.body.classList.contains("fixed");
+                const isRight = document.body.classList.contains("right");
+
+                if (isFixed && isRight) {
+                    output.style.marginLeft  = "0";
+                    output.style.marginRight = newW + "px";
+                    handle.style.left  = "auto";
+                    handle.style.right = newW + "px";
+                } else if (isFixed && !isRight) {
+                    output.style.marginLeft  = newW + "px";
+                    output.style.marginRight = "0";
+                    handle.style.left  = newW + "px";
+                    handle.style.right = "auto";
                 } else {
-                    // 悬浮模式：主区恢复 auto，拖动条回 0
-                    output.style.marginLeft = "auto";
-                    handle.style.left      = "0px";
+                    // 悬浮模式：清除所有边距，句柄贴边
+                    output.style.marginLeft  = "0";
+                    output.style.marginRight = "0";
+                    handle.style.left  = isRight ? "auto" : "0px";
+                    handle.style.right = isRight ? "0px"  : "auto";
                 }
             }
         </script>

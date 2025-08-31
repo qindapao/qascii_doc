@@ -1,0 +1,31 @@
+d {
+    text-decoration: line-through;
+    color: #6a737d;
+    display: inline-block;
+    white-space: pre;
+}
+x {
+    font-weight: bold;
+    display: inline-block;
+    white-space: pre;
+}
+z {
+    font-style: italic;
+    display: inline-block;
+    white-space: pre;
+}
+h {
+    background-color: yellow;
+    color: black;
+    display: inline-block;
+    white-space: pre;
+}
+.fl {
+    display: inline-block;
+    font-family: inherit;
+    font-size: inherit;
+    white-space: pre;
+    text-decoration: underline;
+    color: #0366d6;
+}
+
