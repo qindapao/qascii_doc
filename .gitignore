@@ -1,2 +1,11 @@
 *.swp
+node_modules/
+package-lock.json
+package.json
+GPATH
+GRTAGS
+GTAGS
+*.pdf
+demo.html
+outline_errors.json
 

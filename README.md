@@ -8,6 +8,9 @@ we can use [asciidocfx](https://asciidocfx.com/) or `vim`.
 `asciidocfx`需要安装完整的`java`环境，我并不是很喜欢，所以还是选择用`vim`来编辑。
 然后用自定义的模板来预览，如果导出使用官方的标准的`Ruby`工具。
 
+`asciidoc`的工具链并没有`Sphinx`强大，很多东西需要自己动手。
+
+
 ## 环境准备
 
 ### ruby
@@ -20,7 +23,7 @@ https://rubyinstaller.org/downloads/archives/
 
 #### asciidoctor 安装
 
-推荐使用`gitbash`来安装，比较方便，如果需要设置代码，可以先：
+推荐使用`gitbash`来安装，比较方便，如果需要设置代理，可以先：
 
 ```bash
 export http_proxy=http://用户名:密码@proxy.xx.com:8080 
@@ -59,6 +62,70 @@ nnoremap <leader><leader>p :call PreviewAsciiDoc()<CR>
 我们的文件。模板会自动检测源文件的更新，当文件更新的时候，预览页会同步更新。
 
 ## 导出
+
+### 导出到html
+
+#### 一般的可选参数
+
+如果源文件头部是：`:toc: left`，那么目录自动固定在左边。或者命令行加参数也可以。
+
+命令行参数中的 `-a` 标签其实就是源文件头部的 `::` 属性信息。为了简化命令行参数，
+我们常见的做法就是直接写到源文件头部，这样也好控制。
+
+```bash
+asciidoctor -b html5 -a toc=left -a toclevels=6 -a sectnums demo.adoc
+```
+
+或者直接：
+
+```bash
+asciidoctor -b html5 demo.adoc -o demo.html
+```
+
+#### 定制自己的样式
+
+1. 这个属于高级玩法了。可以定义一个`custom.css`，放置到和源文件相同的目录下。
+2. 如果有 `javascript` 脚本需要定制，那么定义一个 `docinfo.html` 在相同目录下，
+里面写入注入的 `javascript` 代码。源文件头加上。
+
+```asciidoc
+:stylesheet: custom.css
+:docinfo: shared
+```
+
+然后导出的时候可以不指定任何参数，因为我们已经在源文件中指定了。
+
+```bash
+asciidoctor -b html5 demo.adoc -o demo_custom.html
+```
+
+当前场景下，定义成`docinfo-header.html`也是可以的。
+
+其实有三个文件可以注入：
+
+* docinfo.html
+    插入到 `<body>` 中，JS 脚本、版权声明、页脚信息等
+
+* docinfo-footer.html
+    插入到 `<body>` 末尾，JS 脚本、目录栏容器、初始化逻辑等
+
+* docinfo-header.html
+    插入到 `<head>` 中，`<style>`、`<meta>`、外部 `CSS/JS` 引入等
+3. 如果想指定某个 `javascript` 注入脚本为某个文档专用，源文件头像下面这样写。
+
+```asciidoc
+:stylesheet: custom.css
+::docinfo: private
+```
+
+然后我们的注入脚本命名为： `yourdocname-docinfo.html`、
+`yourdocname-docinfo-footer.html`、`yourdocname-docinfo-header.html`。
+在我们当前的项目中，就命名为：`demo-docinfo.html`。
+这样的好处是我们可以为每个文档定制主题。
+
+注意：当前定制样式只在 `html` 中有效，在 `pdf` 中默认是无效的。所以如果要转换成
+pdf 建议文档中不要使用自定义语法。
+
 
 ### 导出到pdf
 
@@ -114,7 +181,7 @@ RobotoMono-Regular.ttf           ---->     RobotoMono-Regular.ttf
 RobotoMono-BoldItalic.ttf        ---->     RobotoMono-BoldItalic.ttf
 ```
 
-如果你喜欢 `KaiGenGothic` 字体，直接下载这个字体也行，不过我感觉这个字体太老旧了，
+如果你喜欢 [KaiGenGothic](https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic/releases/tag/v0.1.0-fonts) 字体，直接下载这个字体也行，不过我感觉这个字体太老旧了，
 就用`sarasamono`来替代它了。
 
 3. 然后运行下面的命令导出`pdf`.
@@ -195,84 +262,69 @@ xref:chapters/chapter2.adoc[第二章]
 
 只要你的文件结构保持一致，链接就能正确解析。
 
-### 导出到html
+#### 取巧的方法(推荐)
 
-#### 目录位置
+如果要保持 `html` 中所有的格式，包括自定义的格式，那么可以通过浏览器的`打印`
+功能中的`打印到PDF`来实现。
 
-如果源文件头部是：`:toc: left`，那么目录自动固定在左边。或者命令行加参数也可以。
+但是直接打印出来的 `pdf` 的页眉和页脚没法控制，并且还有别的东西也无法改。
+我们考虑使用`Puppeteer`。
 
-```bash
-asciidoctor -a toc=left -a toclevels=6 -a sectnums demo.adoc
-```
+1. 安装 Puppeteer
 
-#### 定制自己的样式
-
-这个属于高级玩法了。比如我们想实现浮动的侧边目录，可以定义一个`custom.css`，放置到和源
-文件相同的目录下。
-
-```css
-.toc {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 250px;
-    height: 100%;
-    overflow-y: auto;
-    background-color: #f9f9f9;
-    border-right: 1px solid #ccc;
-    transition: transform 0.3s ease;
-    transform: translateX(-100%);
-    z-index: 999;
-}
-
-.toc:hover {
-    transform: translateX(0);
-}
-```
-
-然后导出的时候这样(支持绑定多个`css`文件)：
+确保你已经安装了 `Node.js`，然后运行下面的命令安装`puppeteer`包：
 
 ```bash
-asciidoctor -a toc=left -a linkcss=true -a stylesdir=. -a stylesheet=asciidoctor-default.css,custom.css demo.adoc -o custom.html
-```
-#### 脚本注入
-
-一些参考文档：
-
-* https://liming.pub/post/asciidoctor-customization/
-* https://docs.asciidoctor.org/asciidoctor/latest/html-backend/custom-stylesheet/
-
-##### 源文件中的操作
-
-```Asciidoc
-:docinfo: shared
+export PUPPETEER_SKIP_DOWNLOAD=true
+npm install -g puppeteer
 ```
 
-`:docinfo: shared` 的作用: 它会在导出的 HTML 中插入一个名为：
-`<basename>-docinfo.html`
-的文件内容，位置在 `<head>` 标签内。比如你的文档叫 `demo.adoc`，那它就会去找：
-`demo-docinfo.html`，并把里面的内容嵌入到 HTML 的 `<head>` 区域。
+>上面一定要加 `-g` 选项把工具安装到全局环境中去，不要安装到当前目录下。
 
-
-
-##### 注入脚本编辑
-
-参考`demo-docinfo.html`。
-
-##### 命令行导出参数
+2. 运行导出命令，从`html`中转换到`pdf`。
 
 ```bash
-asciidoctor -a docinfo=shared -a stylesheet=asciidoctor-default.css,custom.css -a linkcss=true demo.adoc -o demo_insert.html
+node export-pdf.js input=demo.html output=demo.pdf size=A3 title="技术文档"
 ```
 
-##### 变通的方法
+3. 导出的`pdf`尽量保持了原始的格式，但是没有侧边栏的`toc`功能。可以用下面的
+`python`脚本来生成，运行脚本前先编辑`generate_pdf_outline.json`文件配置参数。
 
-当前这些方案如果实现复杂，其实可以写一个脚本。在导出源文件以前，先创建一个分支，
-把源文件中的特殊标签都处理掉。然后再用标准的转换流程处理即可。只是这样太麻烦了，
-有空还是研究清楚上面的方法。
+```python
+pip install pymupdf
+
+python generate_pdf_outline.py
+```
 
 
-##### 转换成高级的PDF的方法
+
+### 转换成高级的PDF的方法
 
 https://blog.csdn.net/gitblog_01071/article/details/142509412
+
+暂时没有研究。
+
+## snippet
+
+### vim
+
+如果使用的是`vim`编辑器，可以使用当前项目中的`asciidoc.snippets`文件来做语法补全。
+
+一般情况下放置到`C:\Users\xx\.vim\plugged\vim-snippets\mysnips`目录即可。具体取决于你的配置。
+如果经常更新，最好的方法是直接从项目目录创建一个`link`到vim的相应插件目录。`Windows`系统
+请在`cmd`环境下执行下面的指令，不要在`power shell`的环境中执行。
+
+```cmd
+C:\Windows\System32>C:
+
+C:\>cd C:\Users\xx\.vim\plugged\vim-snippets\mysnips\
+
+C:\Users\xx\.vim\plugged\vim-snippets\mysnips>mklink asciidoc.snippets D:\project\asciidoc\asciidoc.snippets
+为 asciidoc.snippets <<===>> D:\project\asciidoc\asciidoc.snippets 创建的符号链接
+
+C:\Users\xx\.vim\plugged\vim-snippets\mysnips>
+```
+
+如果你不怕麻烦，每次更新后手动拷贝过去也是可以的。
+
 

@@ -1,0 +1,32 @@
++ .git/
+~ fonts/
+    KaiGenGothicCN-Regular.ttf
+~ pics/
+    2025-08-26.png
+    logo.png
+    封面.png
++ svgs/
+  .gitignore
+  asciidoc_preview.html
+  chapter1-intro.adoc
+  chapter1-usage.adoc
+  chapter1.adoc
+  clear.sh
+  custom.css
+  demo.adoc
+  demo_create.sh
+  docinfo-header.html
+  export-pdf.js
+  generate_pdf_outline.json
+  generate_pdf_outline.py
+  README.md
+  todo.txt
+
+
+当前使用的资源文件：
+https://cdn.jsdelivr.net/npm/@asciidoctor/core@2.2.1/dist/browser/asciidoctor.min.js
+https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js
+https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css
+https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css
+https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css
+

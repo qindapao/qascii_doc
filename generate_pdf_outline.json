@@ -1,0 +1,19 @@
+{
+    "input": "demo.pdf",
+    "toc_pages": "1-2",
+    "offset": 0,
+    "cover": "A3",
+    "output": "demo_with_outline.pdf",
+    "image_path": "./pics/封面.png",
+    "logo_path": "./pics/logo.png",
+    "font_path": "./fonts/KaiGenGothicCN-Regular.ttf",
+    "title": "\U0001f4d8 中文某个技术文档",
+    "subtitle": "自动生成我们要书签与封面",
+    "author": "作者：老铁2号",
+    "date": "日期：2025-09-04",
+    "preface": [
+        "这是第一段序言内容，介绍文档的背景、目标读者和使用方法。",
+        "这是第二段序言内容，可能是致谢、版本历史或特别说明。"
+    ]
+}
+

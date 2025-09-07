@@ -1,0 +1,43 @@
+<script>
+console.log("✅ docinfo 注入成功");
+document.addEventListener("DOMContentLoaded", () => {
+    function countDoubleWidthChars(str) {
+        const regex = /[\u1100-\u115F\u2E80-\uA4CF\uAC00-\uD7A3\uF900-\uFAFF\uFF01-\uFF60\uFFE0-\uFFE6]/g;
+        const m = str.match(regex);
+        return m ? m.length : 0;
+    }
+
+    function applyFixedWidth(selector, offset = 0) {
+        document.querySelectorAll(selector).forEach((el) => {
+            const txt = el.outerHTML.trim();
+            const len = txt.length + countDoubleWidthChars(txt) + offset;
+            el.style.width = `${len}ch`;
+        });
+    }
+
+    ["d", "x", "z", "h"].forEach(tag => applyFixedWidth(tag, 0));
+
+    document.querySelectorAll("l").forEach((el) => {
+        const href = el.getAttribute("h");
+        if (href) {
+            const a = document.createElement("a");
+            a.href = href;
+            a.className = "fl";
+            a.textContent = el.textContent;
+            el.replaceWith(a);
+        }
+    });
+
+    applyFixedWidth(".fl", -14);
+
+    // 插入分页标记在目录和正文之间
+    const toc = document.querySelector('#toc');
+    const content = document.querySelector('#content');
+    if (toc && content) {
+        const breaker = document.createElement('div');
+        breaker.className = 'toc-break';
+        content.parentNode.insertBefore(breaker, content);
+    }
+});
+</script>
+

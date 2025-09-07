@@ -1,63 +1,10 @@
-- 大文件解决方案。
-    建议一：模块化 + 主控文件驱动
-    将文档拆分为多个小模块，每个模块只负责一个主题或子章节。然后用一个主控文件（比如 main.adoc）来统一组织结构。
-
-    示例结构：
-    代码
-    docs/
-    ├── main.adoc
-    ├── 01-intro.adoc
-    ├── 02-install.adoc
-    ├── 03-usage.adoc
-    │   ├── 03-01-basic.adoc
-    │   └── 03-02-advanced.adoc
-    ├── 04-api.adoc
-    └── 99-appendix.adoc
-    主控文件内容：
-    asciidoc
-    = 项目文档
-    :toc:
-    :sectnums:
-
-    include::01-intro.adoc[]
-    include::02-install.adoc[]
-    include::03-usage/03-01-basic.adoc[leveloffset=+1]
-    include::03-usage/03-02-advanced.adoc[leveloffset=+1]
-    include::04-api.adoc[]
-    include::99-appendix.adoc[]
-    这样你可以在 Vim 中只打开某个小文件编辑，避免卡顿，同时主控文件负责拼接和编号。
-
-    建议二：自动化构建 + 预览脚本
-    你可以写一个简单的 Node.js 或 Python 或 vim 脚本，自动读取主控文件，解析 include:: 指令，拼接所有章节内容，然后传给你的前端模板进行预览。
-
-    保持每个章节独立维护
-
-    自动生成完整内容用于预览和导出
-
-    保留 AsciiDoc 的语义结构（包括编号、目录）
-
-    建议三：章节命名规范 + 主题标签
-    为了“智能拼接主题”，你可以在每个章节文件顶部加上元信息，比如：
-
-    asciidoc
-    // file: 03-usage/03-01-basic.adoc
-    :chapter-title: 基础用法
-    :chapter-id: usage-basic
-    :tags: usage, beginner
-    然后拼接脚本可以读取这些元信息，自动生成目录、导航、甚至 tag-based 过滤视图。
-
 - 文本编辑和预览同步进行
     当前并没有十分必要。
     如果要做可以通过 websocket 发送最近的章节的 ID 给客户端。然后让客户端滚动到
     对应的位置即可。不过可能闪烁严重，并没有十分必要。
     章节 ID 可以是隐式的，或者是显示定义的锚点。
 
-- 如果要通过html转换成pdf
-    WeasyPrint
-
 - 浏览器的缓存可能影响预览效果。建议每次新加载文件后都运行下 `Ctrl+Shift+R` 清理缓存。
 
-- 预览模板导出的时候链接是不对的，要么是网络路径(本地服务器打开方式)要么是绝对路径(文件打开方式)。
-
-- 我自己的模板中可以增加导出到 PDF 的按钮。可以导出到 PDF，自动转换内部链接。
+- 需要把这套流程打造成自动化构建之类的东西，无论是基于web的还是本地的或者是基于容器的。
 

@@ -1,17 +1,48 @@
 = xx我的第一篇 AsciiDoc 文档
 Author Name <email@example.com>
 :toc: left
+:lang: zh-CN
+:toclevels: 6
 :icons: font
 :source-highlighter: highlightjs
 :sectnums:
 :sectnumlevels: 6
+:stylesheet: custom.css
 :docinfo: shared
+:scripts: cjk
+:outline-title: pdf outline title
+:outlinelevels: 6
 
 
+include::chapter1.adoc[]
+
+== 所有可能的文档头部说明
+
+[source,asciidoc]
+----
+:title:	设置文档标题（可替代 = 标题）
+:author: / :email:	设置作者信息
+:revnumber: / :revdate:	设置版本号和日期
+:description:	设置 meta 描述信息
+:keywords:	设置 meta 关键词
+:lang:	设置语言（如 zh-CN）
+:doctype:	设置文档类型（如 book, article, manpage）
+:imagesdir:	设置图片目录路径
+:homepage:	设置项目主页链接
+:data-uri:	将图片嵌入为 base64
+:numbered:	启用自动编号（等效于 :sectnums:）
+:backend:	设置输出格式（如 html5, pdf, docbook）
+:experimental:	启用实验性语法（如 kbd:[Ctrl+C]）
+:toc-title:	自定义目录标题（默认是 “Table of Contents”）
+----
+
+[[section-titles]]
 
 == 所有语法的速查表和范例
 
 link:https://docs.asciidoctor.org/asciidoc/latest/syntax-quick-reference/[快速语法查看链接]
+
+link:https://docs.asciidoctor.org/asciidoc/latest/[所有的语法链接]
 
 语法太多了，下面只是列举了一部分，有空的时候再补充完整吧。具体的可以参考上面的链接速查。
 
@@ -177,9 +208,9 @@ We need [.line-through]#ten# twenty VMs.
 
 A [.myrole]#custom role# must be fulfilled by the theme.
 
-我们的 `css` 类里面定制了 `green` 这个属性，我们用上看下效果。
+我们的 `css` 类里面定制了 `gt` 这个属性，我们用上看下效果。
 
-A [.green]#custom role# must be fulfilled by the theme.
+A [.gt]#custom role# must be fulfilled by the theme.
 
 ==== 上标和下标(Superscript and subscript)
 
@@ -538,13 +569,25 @@ xx<b>粗体</b>xx   <i>斜体</i>  <u>高亮</u>
 +--------+     +--------+        <d>deletecon </d>    <d>删除</d>                     |              |
 | modeA  | --> | modeB  |  <l h="https://example.com">中文kxx</l>                     |              |               
 +--------+     +--------+  <l h="#xggegemoduleB">中文</l>                             |              |
-xx<x>粗体dedg</x>xx   <z>斜体</z>     <h>高亮</h>后面的内容不高亮                     |              |
+xx<x>中文dedg</x>xx   <z>斜体</z>     <h>高亮</h>后面的内容不高亮                     |              |
               xx                                                                      |
 <l h="#xggegemoduleB">中文</l>           other                                        |
 </pre>
 ++++
 
 
+++++
+<pre>
+
+*boald* _1223_            
++--------+     +--------+        <d>deletecon </d>    <d>    </d>                     |              |
+| modeA  | --> | modeB  |  <l h="https://example.com">中文kxx</l>                     |              |               
++--------+     +--------+  <l h="#xggegemoduleB">    </l>                             |              |
+xx<x>    dedg</x>xx   <z>    </z>     <h>    </h>                                     |              |
+              xx                                                                      |
+<l h="#xggegemoduleB">    </l>           other                                        |
+</pre>
+++++
 
 *bold* _italic_
 
@@ -573,8 +616,13 @@ xx<x>粗体dedg</x>xx   <z>斜体</z>     <h>高亮</h>后面的内容不高亮 
 == 五、图像嵌入
 
 [#section-图像]
-image::images/diagram.png[系统架构图,align="center",width=300]
+image::pics/2025-08-26.png[系统架构图,align="center",width=300]
 
+[#section-图像]
+image::pics/2025-08-26.png[系统架构图,align="left",width=300]
+
+[#section-图像]
+image::pics/2025-08-26.png[系统架构图,align="right",width=300]
 
 == 六、表格
 
@@ -754,15 +802,15 @@ xxx
 
 === 颜色渲染
 
-真的可以 [.red-text]#这是红色文字# 这样的啊              [.red-text]#这是红色文字#
+真的可以 [.rt]#这是红色文字# 这样的啊              [.rt]#这是红色文字#
 
     语法的前后必须有空格，不然颜色不会正常显示。
         个的e
 
 
-这是pass:[<span class="red-text">红色文字</span>]的一部分。
+这是pass:[<span class="rt">红色文字</span>]的一部分。
 
-这样也可以+++<span class="red-text">红色文字</span>+++可以不保留空格
+这样也可以+++<span class="rt">红色文字</span>+++可以不保留空格
     
     如果想不要空格也能显示，只能像上面这样。用`pass`语法。
 
@@ -992,4 +1040,23 @@ endif::[]
 ++++
 
 *加粗* _斜体_
+
+跳转到第一章的某个点：<<chapter1-anchor>>。
+
+<<chapter1-anchor, 点我跳到第一章的某个点>>
+
+== 再增加一个章节吧。
+== 再增加一个章节吧。
+== 再增加一个章节吧。
+== 再增加一个章节吧。
+== 再增加一个章节吧。
+== 再增加一个章节吧。
+== 再增加一个章节吧。
+== 再增加一个章节吧。
+== 文档标题。
+== 文档标题。
+== 文档标题。
+== 文档标题。
+== 文档标题。
+
 
